@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body id="body">
+    <form action="" style="background-color: aquamarine; text-align: center;">
+    <label for="" >prc</label >
+        <input type="number" name="sell" id="sellprice"  required>
+        <label for="">name</label>
+        <input type="text" name="name"  id="pname" required>
+        <button type="submit"  id="addbtn">Add </button>
+        <h1 id="h1">items</h1>
+        
+        
+    </form>
+    <ul id="list" style="color:black ;text-align: center;"></ul>
+    <h1 id="tot" style="color: blueviolet; background-color: blanchedalmond; border-radius: 5px; text-align: center;"></h1>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.4/axios.min.js" integrity="sha512-Th6RhKVKcUO1NdowoioG5HrNgi4JzStsjpwheSR+nWcDIVO4Wv6E6D14o/46EqqDsLSca/rcMD1a3OLyPkexAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        var addbtn = document.getElementById('addbtn')
+        addbtn.addEventListener('click',savedatatocrud)
+
+function savedatatocrud(event){
+event.preventDefault()
+let nm = document.getElementById('pname').value
+let pr = parseInt(document.getElementById('sellprice').value)
+
+axios.post('https://crudcrud.com/api/f6708b3227074a4a9ea5b99314d5d2b0/aps',obj={
+      'price': pr,
+  'name': nm
+    })
+.then((resolve)=>{
+    document.getElementById('sellprice').value=''
+    document.getElementById('pname').value=''
+    shownewuseronscreen(resolve.data)        
+    total+=resolve.data.price
+    gettotal(total)
+
+}).catch((err)=>{
+  console.log(err)
+})   
+// window.addEventListener('DOMContentLoaded',()=>
+
+}
+
+
+var total =0
+function get(){
+axios.get('https://crudcrud.com/api/f6708b3227074a4a9ea5b99314d5d2b0/aps')
+.then((res)=>{
+    var data = res.data
+    for(var i=0;i<res.data.length;i++){
+    //    console.log(res.data[i])
+        shownewuseronscreen(data[i])
+        total+=data[i].price        
+    }
+    gettotal(total)
+    
+   
+
+}).catch((rej)=>{
+    console.log('rejected')
+})
+
+
+
+}
+
+
+    function shownewuseronscreen(user){
+    //    document.getElementById('sellprice')=''
+    //    document.getElementById('pname')=''
+       const parentNode = document.getElementById('list')
+       const childHTML = `<li id=${user._id}>${user.price} of ${user.name}
+                            <button onclick=deleteuser('${user._id}') style="color: blueviolet; background-color: blanchedalmond; border-radius: 5px; ">delete</button></li>`
+       parentNode.innerHTML = parentNode.innerHTML + childHTML
+    }
+    console.log(document.getElementById('body'))
+  
+    function deleteuser(userid){
+        
+        
+        axios.delete(`https://crudcrud.com/api/f6708b3227074a4a9ea5b99314d5d2b0/aps/${userid}`)
+        .then((reso)=>{
+            removeuserfromscreen(userid)
+            
+           
+        }).catch((rej)=>{
+            console.log(rej)
+        })
+    }
+    
+
+    function removeuserfromscreen(userid){
+     parentNode = document.getElementById('list')       
+    var childNodetoberemoved = document.getElementById(userid)
+     parentNode.removeChild(childNodetoberemoved)
+    }
+    function gettotal(value){
+       
+   document.getElementById('tot').innerHTML=`TOtal:${total}`
+       
+    }
+    get()
+
+</script>
+</body>
+</html>
